@@ -25,9 +25,28 @@ async function run() {
     const productCategoriesCollection = client
       .db("new-network-resale")
       .collection("productCategories");
+    const brandProductsCollection = client
+      .db("new-network-resale")
+      .collection("brandProducts");
+    const bookingsCollection = client
+      .db("new-network-resale")
+      .collection("bookings");
 
     app.get("/product-categories", async (req, res) => {
       const result = await productCategoriesCollection.find({}).toArray();
+      res.send(result);
+    });
+
+    app.get("/category/:id", async (req, res) => {
+      const id = req.params.id;
+      const allProducts = await brandProductsCollection.find({}).toArray();
+      const category = allProducts.filter((pd) => pd.brand_category_id === id);
+      res.send(category);
+    });
+
+    app.post("/bookings", async (req, res) => {
+      const booking = req.body;
+      const result = await bookingsCollection.insertOne(booking);
       res.send(result);
     });
 
