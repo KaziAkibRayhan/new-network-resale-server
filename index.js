@@ -31,6 +31,9 @@ async function run() {
     const bookingsCollection = client
       .db("new-network-resale")
       .collection("bookings");
+    const productsCollection = client
+      .db("new-network-resale")
+      .collection("products");
     const usersCollection = client.db("new-network-resale").collection("users");
 
     app.get("/product-categories", async (req, res) => {
@@ -58,10 +61,23 @@ async function run() {
       const user = await usersCollection.findOne(query);
       res.send({ isAdmin: user?.role === "admin" });
     });
+    app.get("/users/seller/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      res.send({ isSeller: user?.type === "Seller" });
+    });
 
     app.post("/users", async (req, res) => {
       const user = req.body;
       const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
+
+    // Seller Products Store
+    app.post("/products", async (req, res) => {
+      const product = req.body;
+      const result = await productsCollection.insertOne(product);
       res.send(result);
     });
 
