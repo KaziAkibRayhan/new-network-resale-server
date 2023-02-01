@@ -47,16 +47,25 @@ async function run() {
       const category = allProducts.filter((pd) => pd.brand_category_id === id);
       res.send(category);
     });
-    // Booking Store
-    app.post("/bookings", async (req, res) => {
-      const booking = req.body;
-      const result = await bookingsCollection.insertOne(booking);
-      res.send(result);
-    });
+
+    // app.get("/bookings/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: ObjectId(id) };
+    //   const order = await bookingsCollection.findOne(query);
+    //   res.send(order);
+    // });
+
     app.get("/bookings/:email", async (req, res) => {
       const email = req.params.email;
       const query = { userEmail: email };
       const result = await bookingsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    // Booking Store
+    app.post("/bookings", async (req, res) => {
+      const booking = req.body;
+      const result = await bookingsCollection.insertOne(booking);
       res.send(result);
     });
 
@@ -120,6 +129,7 @@ async function run() {
       const result = await productsCollection.deleteOne(filter);
       res.send(result);
     });
+
 
     console.log("DB Connect!");
   } finally {
