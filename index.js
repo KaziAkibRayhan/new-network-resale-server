@@ -53,6 +53,12 @@ async function run() {
       const result = await bookingsCollection.insertOne(booking);
       res.send(result);
     });
+    app.get("/bookings/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { userEmail: email };
+      const result = await bookingsCollection.find(query).toArray();
+      res.send(result);
+    });
 
     // Get All Admin
     app.get("/users/admin/:email", async (req, res) => {
@@ -67,10 +73,30 @@ async function run() {
       const user = await usersCollection.findOne(query);
       res.send({ isSeller: user?.type === "Seller" });
     });
+    app.get("/users/buyer/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      res.send({ isBuyer: user?.type === "buyer" });
+    });
 
     app.post("/users", async (req, res) => {
       const user = req.body;
       const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
+    // get all sellers
+    app.get("/users/:type", async (req, res) => {
+      const type = req.params.type;
+      const query = { type: type };
+      const result = await usersCollection.find(query).toArray();
+      res.send(result);
+    });
+    // delete the sellers
+    app.delete("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await usersCollection.deleteOne(query);
       res.send(result);
     });
 
